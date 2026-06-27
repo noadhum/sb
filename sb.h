@@ -19,6 +19,8 @@ SBDEF void sb_append_char(String_Builder *sb, char c);
 SBDEF void sb_clear(String_Builder *sb);
 SBDEF bool sb_equal(const String_Builder *a, const String_Builder *b);
 SBDEF bool sb_equal_ignorecase(const String_Builder *a, const String_Builder *b);
+SBDEF bool sb_equal_with_cstr(const String_Builder *sb, const char *cstr);
+SBDEF bool sb_equal_with_cstr_ignorecase(const String_Builder *sb, const char *cstr);
 SBDEF void sb_reserve(String_Builder *sb, size_t new_capacity);
 SBDEF void sb_free(String_Builder *sb);
 
@@ -39,11 +41,10 @@ SBDEF void sb_free(String_Builder *sb);
 #define SB_FREE free
 #endif // SB_FREE
 
-
 #define SB_PANIC(expr, message)                                         \
      do {                                                               \
           if (!(expr)) {                                                \
-               fprintf(stderr, "Error in: file %s, function %s, line %d, Message: %s\n", __FILE__, __func__, __LINE__, message); \
+               fprintf(stderr, "%s:%d: Panicked: %s\n", __FILE__, __LINE__, message); \
                abort();                                                 \
           }                                                             \
      } while (0)
@@ -106,6 +107,30 @@ SBDEF bool sb_equal_ignorecase(const String_Builder *a, const String_Builder *b)
                return false;
           }
      }
+
+     return true;
+}
+
+SBDEF bool sb_equal_with_cstr(const String_Builder *sb, const char *cstr)
+{
+     size_t cstr_length = strlen(cstr);
+     if (sb->count != cstr_length) return false;
+     return memcmp(sb->data, cstr, sb->count) == 0;
+}
+
+SBDEF bool sb_equal_with_cstr_ignorecase(const String_Builder *sb, const char *cstr)
+{
+     size_t cstr_length = strlen(cstr);
+     if (sb->count != cstr_length) return false;
+
+     unsigned char *usb = (unsigned char *)sb->data;
+     unsigned char *ucstr = (unsigned char *)cstr;
+     for (size_t n = 0; n < sb->count; n++) {
+          if (tolower(usb[n]) != tolower(ucstr[n])) {
+               return false;
+          }
+     }
+
      return true;
 }
 

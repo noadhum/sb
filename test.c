@@ -142,6 +142,22 @@ void test_sb_equal_ignorecase(void)
      SB_ASSERT_TRUE(!sb_equal_ignorecase(&a, &b));
 }
 
+void test_sb_equal_with_cstr(void)
+{
+     String_Builder sb = sb_from_cstr("hello");
+     SB_ASSERT_TRUE(sb_equal_with_cstr(&sb, "hello"));
+
+     sb_append(&sb, "world");
+     SB_ASSERT_TRUE(sb_equal_with_cstr(&sb, "helloworld"));
+}
+
+void test_sb_equal_with_cstr_ignorecase(void)
+{
+     String_Builder sb = sb_from_cstr("hello");
+     SB_ASSERT_TRUE(sb_equal_with_cstr_ignorecase(&sb, "HELLO"));
+     SB_ASSERT_TRUE(!sb_equal_with_cstr_ignorecase(&sb, "HELLOW"));
+}
+
 void test_sb_reserve(void)
 {
      String_Builder sb = {0};
@@ -179,6 +195,8 @@ int main(void)
      test_sb_clear_and_append();
 
      test_sb_equal_ignorecase();
+
+     test_sb_equal_with_cstr();
 
      test_sb_reserve();
 
