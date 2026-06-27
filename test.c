@@ -197,6 +197,7 @@ int main(void)
      test_sb_equal_ignorecase();
 
      test_sb_equal_with_cstr();
+     test_sb_equal_with_cstr_ignorecase();
 
      test_sb_reserve();
 
